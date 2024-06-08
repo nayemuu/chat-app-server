@@ -37,8 +37,8 @@ const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({ name, email, password: hashedPassword });
-        console.log("newUser = ", newUser);
-        const JsonWebToken = jwt.sign({id:newUser._id,  name }, process.env.SIGNATURE, {
+        // console.log("newUser = ", newUser);
+        const JsonWebToken = jwt.sign({ id:newUser._id }, process.env.SIGNATURE, {
             expiresIn: '1h',
         });
         res.status(200).json({
