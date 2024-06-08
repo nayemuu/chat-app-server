@@ -1,5 +1,4 @@
-// external imports
-// internal imports
+
 const User = require('../models/userModel');
 const {decodeToken} = require('../utils/jwt-utils');
 const { replaceMongoIdInArray } = require('../utils/mongoDB-utils');
@@ -8,14 +7,13 @@ const { replaceMongoIdInArray } = require('../utils/mongoDB-utils');
 // search user
 async function searchUser(req, res, next) {
   const { id } = decodeToken(req.headers);
-  console.log("id = ", id);
+  // console.log("id = ", id);
 
   const searchText = req.params.searchText;
-  console.log("searchText = ", searchText);
+  // console.log("searchText = ", searchText);
   if (!searchText?.trim()) {
-    return res.status(500).json({ message: 'No Search Text found"' });
+    return res.status(500).json({ message: 'No Search Text found'});
 }
-
 const regex = new RegExp(searchText, "i");
 
   try {
@@ -33,7 +31,6 @@ const regex = new RegExp(searchText, "i");
         },
         "name email" 
       ).lean();
-
     
       // console.log("users = ", users);
 
