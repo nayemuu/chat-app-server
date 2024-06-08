@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectToDatabase = require('./connectToDatabase');
 const authRoutes = require('./routes/authRoutes');
+const inboxRouter = require('./routes/inboxRouter');
 
 require('dotenv').config();
 
@@ -13,6 +14,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/auth', authRoutes);
+app.use("/inbox", inboxRouter);
 
 app.get('/', (req, res) => {
     res.send('Welcome to root Server');

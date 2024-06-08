@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 const express = require('express');
 const { signup, login } = require('../controllers/authController');
-const checkLogin = require('../middlewares/checkLogin');
+const checkLogin = require('../middlewares/common/checkLogin');
 
 const Route = express.Router();
 Route.post('/signup', signup);
