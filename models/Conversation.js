@@ -3,15 +3,15 @@ const mongoose = require("mongoose");
 const conversationSchema = mongoose.Schema(
   {
     creator: {
-      id: mongoose.Types.ObjectId,
-      name: String,
-      avatar: String,
+      type: mongoose.Types.ObjectId,
+      ref: "User", // This User is reffering your User Model
+      required: true
     },
 
     participant: {
-      id: mongoose.Types.ObjectId,
-      name: String,
-      avatar: String,
+      type: mongoose.Types.ObjectId,
+      ref: "User", // This User is reffering your User Model
+      required: true
     },
     last_updated: {
       type: Date,
