@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 
 // inbox
-async function getConversation(req, res, next) {
+async function getConversations(req, res, next) {
   // console.log("yoo");
 
   const { id } = decodeToken(req.headers);
@@ -131,7 +131,87 @@ async function addConversation(req, res, next) {
   }
 }
 
+async function sendMessage(req, res, next){  
+  const { id } = decodeToken(req.headers);
+  // console.log("req.body = ", req.body);
+
+  try {
+
+    const sender = await User.findOne(
+      {_id: id},
+      "email name" 
+    ).lean();
+    // console.log("sender = ", sender);
+
+    if(!req.body.to.trim()){
+      return res.status(400).json({
+        message: "Please, Provide valid information",
+      })
+    }
+    
+
+    const reciever = await User.findOne(
+      {email: req.body.to.trim()},
+      "email name" 
+    ).lean();
+    
+    // console.log("reciever = ", reciever);
+
+    if(!reciever){
+      return res.status(400).json({
+        message: "No user found with this email",
+      })
+    }
+
+    
+    let conversationId = null;
+
+    const isConversationAlreadyExists = await Conversation.findOne(
+      {
+        $or: [
+          { "creator": sender._id, "participant": reciever._id },
+          { "creator": reciever._id, "participant": sender._id },
+        ],
+      }
+    ).lean();
+
+    if(isConversationAlreadyExists){
+      // console.log("Conversation Already exist");
+      conversationId = isConversationAlreadyExists._id.toString();
+      // console.log("conversationId = ", conversationId);
+    }else{
+      // console.log("No Conversation Found");
+      const newConversation = new Conversation({
+        creator: sender._id,
+        participant: reciever._id,
+      });
+
+      const result = await newConversation.save();
+
+      // console.log("newConversation = ", newConversation);
+      // console.log("result = ", result);
+      conversationId = result._id.toString();
+    }
+
+    console.log("conversationId = ", conversationId);
+
+    res.status(200).json({
+      message: "success",
+    });
+
+    
+
+
+    
+  } catch (error) {
+    // console.log("error = ", error);
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
 
 module.exports = {
-  getConversation, searchUser, addConversation, 
+  getConversations, searchUser, addConversation, sendMessage
 };

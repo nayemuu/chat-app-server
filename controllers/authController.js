@@ -39,7 +39,7 @@ const signup = async (req, res) => {
         const newUser = await User.create({ name, email, password: hashedPassword });
         // console.log("newUser = ", newUser);
         const JsonWebToken = jwt.sign({ id:newUser._id }, process.env.SIGNATURE, {
-            expiresIn: '1h',
+            expiresIn: '24h',
         });
         res.status(200).json({
             name: name.trim(),
