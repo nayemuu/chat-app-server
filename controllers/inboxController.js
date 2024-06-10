@@ -223,6 +223,14 @@ async function sendMessage(req, res, next){
 
 // get messages of a conversation
 async function getMessages(req, res, next) {
+  const { limit, offset } = req.query;
+  // const limit = req.query?.limit ? req.query.limit : 10;
+  // const offset = req.query?.offset ? req.query.offset : 0;
+  
+  console.log("limit = ", limit);
+  console.log("offset = ", offset);
+
+  
   try {
     const messages = await Message.find({
       conversation_id: req.params.conversation_id,
@@ -232,7 +240,9 @@ async function getMessages(req, res, next) {
 
     
     res.status(200).json({
-      messages: replaceMongoIdInArray(messages)
+      messages: replaceMongoIdInArray(messages),
+      offset: offset,
+      limit: limit
     });
   }  catch (error) {
     // console.log("error = ", error);
