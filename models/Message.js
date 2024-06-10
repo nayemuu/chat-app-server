@@ -7,15 +7,13 @@ const messageSchema = mongoose.Schema(
     },
     sender: {
       type: mongoose.Types.ObjectId,
-      required: true,
+      ref: "User", // This User is reffering your User Model
+      required: true
     },
     receiver: {
       type: mongoose.Types.ObjectId,
-      required: true,
-    },
-    date_time: {
-      type: Date,
-      default: Date.now,
+      ref: "User", // This User is reffering your User Model
+      required: true
     },
     conversation_id: {
       type: mongoose.Types.ObjectId,

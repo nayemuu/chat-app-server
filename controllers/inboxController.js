@@ -1,7 +1,7 @@
 
 const User = require('../models/userModel');
 const Conversation = require('../models/Conversation');
-const messageModel = require('../models/Message');
+const Message = require('../models/Message');
 const {decodeToken} = require('../utils/jwt-utils');
 const { replaceMongoIdInArray } = require('../utils/mongoDB-utils');
 const mongoose = require('mongoose');
@@ -132,6 +132,7 @@ async function addConversation(req, res, next) {
   }
 }
 
+// send Message
 async function sendMessage(req, res, next){  
   const { id } = decodeToken(req.headers);
   // console.log("req.body = ", req.body);
@@ -196,27 +197,22 @@ async function sendMessage(req, res, next){
 
     console.log("conversationId = ", conversationId);
 
-    let newMessage = await messageModel.create({
+    let newMessage = await Message.create({
       message: req.body.message.trim(),
       sender: sender._id,
       receiver: reciever._id,
       conversation_id: conversationId
     });
 
-    console.log("newMessage = ", newMessage);
+    // console.log("newMessage = ", newMessage);
 
     await Conversation.updateOne({ _id: conversationId }, { $set: { last_message : newMessage.message, last_updated: newMessage.date_time } });
-
 
 
     res.status(200).json({
       message: "Message sent successfully.",
     });
 
-    
-
-
-    
   } catch (error) {
     // console.log("error = ", error);
     res.status(500).json({
@@ -225,7 +221,30 @@ async function sendMessage(req, res, next){
   }
 }
 
+// get messages of a conversation
+async function getMessages(req, res, next) {
+  try {
+    const messages = await Message.find({
+      conversation_id: req.params.conversation_id,
+    }).sort("-createdAt").populate("sender" , "name").populate("receiver" , "name").lean();
+
+    console.log("messages = ", replaceMongoIdInArray(messages));
+
+    
+    res.status(200).json({
+      messages: replaceMongoIdInArray(messages)
+    });
+  }  catch (error) {
+    // console.log("error = ", error);
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
+
+
 
 module.exports = {
-  getConversations, searchUser, addConversation, sendMessage
+  getConversations, searchUser, addConversation, sendMessage, getMessages
 };
