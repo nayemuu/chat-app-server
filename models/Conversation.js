@@ -13,13 +13,15 @@ const conversationSchema = mongoose.Schema(
       ref: "User", // This User is reffering your User Model
       required: true
     },
+
+    last_message: {
+      type: String,
+    },
+
+    
     last_updated: {
       type: Date,
       default: Date.now,
-    },
-    
-    last_message: {
-      type: String,
     },
   },
   {

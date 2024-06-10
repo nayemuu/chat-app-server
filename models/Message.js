@@ -2,23 +2,16 @@ const mongoose = require("mongoose");
 
 const messageSchema = mongoose.Schema(
   {
-    text: {
+    message: {
       type: String,
     },
-    attachment: [
-      {
-        type: String,
-      },
-    ],
     sender: {
-      id: mongoose.Types.ObjectId,
-      name: String,
-      avatar: String,
+      type: mongoose.Types.ObjectId,
+      required: true,
     },
     receiver: {
-      id: mongoose.Types.ObjectId,
-      name: String,
-      avatar: String,
+      type: mongoose.Types.ObjectId,
+      required: true,
     },
     date_time: {
       type: Date,

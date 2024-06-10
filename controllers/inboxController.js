@@ -1,6 +1,7 @@
 
 const User = require('../models/userModel');
 const Conversation = require('../models/Conversation');
+const messageModel = require('../models/Message');
 const {decodeToken} = require('../utils/jwt-utils');
 const { replaceMongoIdInArray } = require('../utils/mongoDB-utils');
 const mongoose = require('mongoose');
@@ -143,7 +144,7 @@ async function sendMessage(req, res, next){
     ).lean();
     // console.log("sender = ", sender);
 
-    if(!req.body.to.trim()){
+    if(!req.body.to.trim() && !req.body.message.trim()){
       return res.status(400).json({
         message: "Please, Provide valid information",
       })
@@ -195,8 +196,21 @@ async function sendMessage(req, res, next){
 
     console.log("conversationId = ", conversationId);
 
+    let newMessage = await messageModel.create({
+      message: req.body.message.trim(),
+      sender: sender._id,
+      receiver: reciever._id,
+      conversation_id: conversationId
+    });
+
+    console.log("newMessage = ", newMessage);
+
+    await Conversation.updateOne({ _id: conversationId }, { $set: { last_message : newMessage.message, last_updated: newMessage.date_time } });
+
+
+
     res.status(200).json({
-      message: "success",
+      message: "Message sent successfully.",
     });
 
     

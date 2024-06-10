@@ -71,7 +71,7 @@ const login = async (req, res) => {
                     { id: userFound.id, name: userFound.name },
                     process.env.SIGNATURE,
                     {
-                        expiresIn: '1h',
+                        expiresIn: '24h',
                     }
                 );
                 res.status(200).json({
