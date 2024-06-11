@@ -234,7 +234,7 @@ async function getMessages(req, res, next) {
   try {
     const messages = await Message.find({
       conversation_id: req.params.conversation_id,
-    }).sort("-createdAt").populate("sender" , "name").populate("receiver" , "name").lean();
+    }).sort("-createdAt").populate("sender" , "name email").populate("receiver" , "name email").lean();
 
     console.log("messages = ", replaceMongoIdInArray(messages));
 
