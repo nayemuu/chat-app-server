@@ -195,7 +195,7 @@ async function sendMessage(req, res, next){
       conversationId = result._id.toString();
     }
 
-    console.log("conversationId = ", conversationId);
+    // console.log("conversationId = ", conversationId);
 
     let newMessage = await Message.create({
       message: req.body.message.trim(),
@@ -227,8 +227,8 @@ async function getMessages(req, res, next) {
   // const limit = req.query?.limit ? req.query.limit : 10;
   // const offset = req.query?.offset ? req.query.offset : 0;
   
-  console.log("limit = ", limit);
-  console.log("offset = ", offset);
+  // console.log("limit = ", limit);
+  // console.log("offset = ", offset);
 
   
   try {
@@ -236,7 +236,7 @@ async function getMessages(req, res, next) {
       conversation_id: req.params.conversation_id,
     }).sort("-createdAt").populate("sender" , "name email").populate("receiver" , "name email").lean();
 
-    console.log("messages = ", replaceMongoIdInArray(messages));
+    // console.log("messages = ", replaceMongoIdInArray(messages));
 
     
     res.status(200).json({

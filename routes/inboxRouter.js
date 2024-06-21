@@ -13,7 +13,7 @@ const router = express.Router();
 // search user for conversation
 router.get("/search/:searchText", checkLogin, searchUser);
 router.get("/conversations", checkLogin, getConversations);
-router.post("/conversation", checkLogin, addConversation);
+router.post("/conversations", checkLogin, addConversation);
 router.post("/message", checkLogin, sendMessage);
 router.get("/messages/:conversation_id", checkLogin, getMessages);
 
