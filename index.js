@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
 const cors = require('cors');
 const morgan = require('morgan');
 const connectToDatabase = require('./connectToDatabase');
@@ -14,9 +16,39 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/auth', authRoutes);
-app.use("/inbox", inboxRouter);
+app.use('/inbox', inboxRouter);
+
+// Create an HTTP server using the Express app
+const server = http.createServer(app);
+
+// map data structure, conversationId-> wsClient
+
+// WebSocket server
+const wss = new WebSocket.Server({ server });
+
+wss.on('connection', (ws) => {
+    console.log('New client connected');
+
+    ws.on('message', (message) => {
+        console.log('Received message:', message.toString());
+        // Broadcast message to all clients
+        wss.clients.forEach((client, index) => {
+            console.log('This is a client', index);
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+                client.send(message.toString());
+            }
+        });
+    });
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+
+    ws.send('Welcome to the WebSocket server!');
+});
 
 app.get('/', (req, res) => {
+    console.log(req);
     res.send('Welcome to root Server');
 });
 
@@ -35,7 +67,24 @@ function errorHandler(err, req, res, next) {
 
 app.use(errorHandler);
 
-app.listen(port, async () => {
+server.listen(port, async () => {
     await connectToDatabase();
     console.log(`response address is = http://localhost:${port}`);
 });
+
+// To test from browser
+// --------------------
+// const ws = new WebSocket('ws://localhost:9000');
+
+// ws.onopen = () => {
+//   console.log('Connected to WebSocket server');
+//   ws.send(JSON.stringify({ username: 'User1', message: 'Hello, World!' }));
+// };
+
+// ws.onmessage = (event) => {
+//   console.log('Received message from server:', event.data);
+// };
+
+// ws.onclose = () => {
+//   console.log('Disconnected from WebSocket server');
+// };
